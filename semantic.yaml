@@ -3,17 +3,12 @@ description: 'The data model consists of three core tables: DIM_ARTICLE, which s
 tables:
   - name: DIM_ARTICLE
     base_table:
-      database: DASH_CORTEX_AGENTS_SUMMIT
-      schema: PUBLIC
+      database: DASH_CORTEX_AGENTS
+      schema: DATA
       table: DIM_ARTICLE
     dimensions:
       - name: ARTICLE_NAME
         expr: ARTICLE_NAME
-        data_type: VARCHAR(16777216)
-        sample_values:
-          - Mondracer Infant Bike
-          - Premium Bicycle
-          - The Ultimate Downhill Bike
         description: The name of the article or product being sold, such as a specific type of bicycle.
         synonyms:
           - product_name
@@ -22,6 +17,11 @@ tables:
           - product_title
           - item_description
           - product_description
+        data_type: VARCHAR(16777216)
+        sample_values:
+          - Mondracer Infant Bike
+          - Premium Bicycle
+          - The Ultimate Downhill Bike
       - name: ARTICLE_CATEGORY
         expr: ARTICLE_CATEGORY
         data_type: VARCHAR(16777216)
@@ -108,8 +108,8 @@ tables:
         - ARTICLE_ID
   - name: DIM_CUSTOMER
     base_table:
-      database: DASH_CORTEX_AGENTS_SUMMIT
-      schema: PUBLIC
+      database: DASH_CORTEX_AGENTS
+      schema: DATA
       table: DIM_CUSTOMER
     dimensions:
       - name: CUSTOMER_NAME
@@ -210,8 +210,8 @@ tables:
         - CUSTOMER_ID
   - name: FACT_SALES
     base_table:
-      database: DASH_CORTEX_AGENTS_SUMMIT
-      schema: PUBLIC
+      database: DASH_CORTEX_AGENTS
+      schema: DATA
       table: FACT_SALES
     dimensions:
       - name: SALES_CHANNEL
@@ -364,4 +364,26 @@ relationships:
       - left_column: ARTICLE_ID
         right_column: ARTICLE_ID
     right_table: DIM_ARTICLE
+verified_queries:
+  - name: Show me monthly sales revenue trends by product category over the past 2 years
+    question: Show me monthly sales revenue trends by product category over the past 2 years.
+    sql: |-
+      SELECT
+        DATE_TRUNC('MONTH', fs.date_sales) AS month,
+        da.article_category,
+        SUM(fs.total_price) AS monthly_revenue
+      FROM
+        fact_sales AS fs
+        INNER JOIN dim_article AS da ON fs.article_id = da.article_id
+      WHERE
+        fs.date_sales >= DATE_TRUNC('YEAR', CURRENT_DATE - INTERVAL '2 YEARS')
+      GROUP BY
+        DATE_TRUNC('MONTH', fs.date_sales),
+        da.article_category
+      ORDER BY
+        month DESC NULLS LAST,
+        da.article_category
+    use_as_onboarding_question: false
+    verified_by: Dash Desai
+    verified_at: 1755721720
 custom_instructions: Limit answer to sales questions about products. You should not answer questions about product specifications or usage.
