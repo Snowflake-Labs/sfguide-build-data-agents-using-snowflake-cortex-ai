@@ -37,7 +37,7 @@ create or replace stage docs encryption = (type = 'snowflake_sse') directory = (
 
 copy files
     into @docs/
-    from @dash_cortex_agents_summit.public.git_repo/branches/main/docs/;
+    from @dash_cortex_agents.data.git_repo/branches/main/docs/;
 
 alter stage docs refresh;
 
