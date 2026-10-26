@@ -1,4 +1,4 @@
-name: semantic
+name: sales_data
 description: 'The data model consists of three core tables: DIM_ARTICLE, which stores detailed information about the products being sold, including their name, category, brand, color, and price; DIM_CUSTOMER, which contains customer profiles with attributes like region, age, gender, and marketing segment; and FACT_SALES, which captures all sales transactions by linking customers to purchased articles, along with details such as sale date, quantity, total price, sales channel, and whether a promotion was applied. Together, these tables provide a comprehensive view of products, customers, and sales activity, enabling rich analysis across multiple dimensions.'
 tables:
   - name: DIM_ARTICLE
